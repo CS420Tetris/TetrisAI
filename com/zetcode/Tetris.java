@@ -11,12 +11,14 @@ Java Tetris game clone
 Author: Jan Bodnar
 Website: https://zetcode.com
  */
-public class Tetris extends JFrame {
+public class Tetris extends JFrame implements Runnable{
 
     private JLabel statusbar;
+    private Thread t;
+    private String title = "default";
 
-    public Tetris() {
-
+    public Tetris() 
+    {
         initUI();
     }
 
@@ -29,7 +31,7 @@ public class Tetris extends JFrame {
         add(board);
         board.start();
 
-        setTitle("Tetris");
+        setTitle(title);
         setSize(200, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -40,12 +42,21 @@ public class Tetris extends JFrame {
         return statusbar;
     }
 
-    public static void main(String[] args) {
-
+    @Override
+    public void run() {
         EventQueue.invokeLater(() -> {
 
             var game = new Tetris();
             game.setVisible(true);
         });
+    }
+
+    public void start()
+    {
+        if (t == null)
+        {
+        t = new Thread (this, "game");
+        }
+        t.start();
     }
 }
