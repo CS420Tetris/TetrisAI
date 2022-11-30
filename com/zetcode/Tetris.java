@@ -42,10 +42,26 @@ public class Tetris extends JFrame {
 
     public static void main(String[] args) {
 
-        EventQueue.invokeLater(() -> {
+        int n = 16; // Number of threads
+        for (int i = 0; i < n; i++) {
+            MultithreadingDemo object
+            = new MultithreadingDemo();
+            object.start();
+        }
+    }
+}
 
+
+class MultithreadingDemo extends Thread {
+    public void run() {
+        try {
+            // Displaying the thread that is running
             var game = new Tetris();
             game.setVisible(true);
-        });
+        }
+        catch (Exception e) {
+            // Throwing an exception
+            System.out.println("Exception is caught");
+        }
     }
 }
