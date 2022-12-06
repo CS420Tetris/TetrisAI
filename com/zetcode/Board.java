@@ -2,6 +2,7 @@ package com.zetcode;
 
 import com.zetcode.Shape.Tetrominoe;
 
+import javax.lang.model.util.ElementScanner14;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -16,7 +17,7 @@ public class Board extends JPanel {
 
     private final int BOARD_WIDTH = 10;
     private final int BOARD_HEIGHT = 22;
-    private final int PERIOD_INTERVAL = 300;
+    private final int PERIOD_INTERVAL = 1000;
 
     private Timer timer;
     private boolean isFallingFinished = false;
@@ -35,8 +36,11 @@ public class Board extends JPanel {
 
     private void initBoard(Tetris parent) {
 
+        //GUI stuff
         setFocusable(true);
         statusbar = parent.getStatusBar();
+
+        //User Input
         addKeyListener(new TAdapter());
     }
 
@@ -193,7 +197,7 @@ public class Board extends JPanel {
         for (int i = 0; i < 4; i++) {
 
             int x = newX + newPiece.x(i);
-            int y = newY - newPiece.y(i);
+            int y = newY - newPiece.y(i); //What this do
 
             if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT) {
 
@@ -213,6 +217,98 @@ public class Board extends JPanel {
         repaint();
 
         return true;
+    }
+
+    private boolean aiMove(Shape newPiece, int newX, int newY) {
+
+        for (int i = 0; i < 4; i++) {
+
+            int x = newX + newPiece.x(i);
+            int y = newY - newPiece.y(i); //What this do
+
+            if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT) {
+
+                return false;
+            }
+
+            if (shapeAt(x, y) != Tetrominoe.NoShape) {
+
+                return false;
+            }
+        }
+
+        curPiece = newPiece;
+        //curX = newX;
+        //curY = newY;
+
+        //repaint();
+
+        return true;
+    }
+
+    private void aiMoveTest(Shape newPiece,int newY) {
+
+        //Set X to 0
+        int StartY = newY;
+        int newX = 0;
+        int x = 0;
+
+        //Increment through X
+        //rotate
+         
+            newX = 0;
+            loop1:
+            while (newX<10)
+            {   
+                
+                //Increment through segments of Piece
+                for (int i = 0; i < 4; i++) {
+
+                    //Set new segment location
+                    x = newX + newPiece.x(i);
+
+                    //If out of bounds stop incrementing X
+                    if (x >= BOARD_WIDTH || newY >= BOARD_HEIGHT) {
+                        break loop1;
+                    }
+
+                    
+                }
+                
+                    
+                for (int j = 0; j < 4; j++)
+                {  
+                    newY = StartY;
+                    //Check if newY hit bottom      MAKE SEPERATE METHOD
+                    while (newY > 0) {
+                        
+
+                        if (!aiMove(newPiece, newX, newY - 1)) {
+            
+                            break;
+                        }
+            
+                        newY--;
+                        
+                        
+                    }
+                    newPiece.rotateRight();
+                    System.out.println(newX);
+                }
+                
+                //Check Score
+                //curX = newX;
+                //curY = newY;
+                
+                
+
+                //pause();
+                newX++;
+            }
+        
+
+        //repaint();
+        //return true;
     }
 
     private void removeFullLines() {
@@ -330,7 +426,8 @@ public class Board extends JPanel {
                 case KeyEvent.VK_RIGHT -> tryMove(curPiece, curX + 1, curY);
                 case KeyEvent.VK_DOWN -> tryMove(curPiece.rotateRight(), curX, curY);
                 case KeyEvent.VK_UP -> tryMove(curPiece.rotateLeft(), curX, curY);
-                case KeyEvent.VK_SPACE -> dropDown();
+                case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece, curY);}
+                    //dropDown();}
                 case KeyEvent.VK_D -> oneLineDown();
             }
         }
