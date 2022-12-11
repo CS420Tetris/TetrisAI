@@ -2,8 +2,6 @@ package com.zetcode;
 
 import com.zetcode.Shape.Tetrominoe;
 
-import javax.security.auth.x500.X500Principal;
-//import javax.lang.model.util.ElementScanner14;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -13,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 public class Board extends JPanel {
 
@@ -34,7 +33,8 @@ public class Board extends JPanel {
     public Board(Tetris parent) 
     {
         initBoard(parent);
-        ai = new AI(1, 1, 1, 1);
+        //ai = new AI(1, 1, 1, 1);
+        ai = new AI(-0.51066, 0.760666, -0.184483, -0.35663);
     }
 
     private void initBoard(Tetris parent) {
@@ -299,9 +299,9 @@ public class Board extends JPanel {
         return true;
     }
 
-    private void aiMoveTest(Shape currentPiece) 
+    private int[] aiMoveTest(Shape currentPiece) 
     {
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        //System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         //int currentX = BOARD_WIDTH -1 - currentPiece.minX();
         //int currentY = 10;
         int newX = 0;
@@ -313,6 +313,10 @@ public class Board extends JPanel {
         int[] xLocations = {0,1,2,3,4,5,6,7,8,9};
 
         double[] score = new double[40];
+        int bestRotate = 0;
+        int bestXColumn = 0;
+        double maxScore = 0;
+        int maxIndex = 0;
 
 
         Shape testPiece = currentPiece;
@@ -335,31 +339,29 @@ public class Board extends JPanel {
                 //Increment through segments of Piece
                 for (int i = 0; i < 4; i++) 
                 {
-
                     //Set new segment location
                     x = newX + testPiece.x(i);
 
                     //If out of bounds stop incrementing X
-                    if (x >= BOARD_WIDTH || newY >= BOARD_HEIGHT || x < 0) {
+                    if (x >= BOARD_WIDTH || newY >= BOARD_HEIGHT || x < 0) 
+                    {
                         inBounds = false;
                     }
-
                 }
 
                 if(inBounds)
                 {
                     dropUp(testPiece,newX,newY);
                     //Check if newY hit bottom      MAKE SEPERATE METHOD
-                    while (newY > 0) {
-                        
+                    while (newY > 0) 
+                    {
 
                         if (!aiMove(testPiece, newX, newY - 1)) {
             
                             break;
                         }
-            
+        
                         newY--;
-                        
                         
                     }
 
@@ -371,7 +373,14 @@ public class Board extends JPanel {
                     } 
                     
                     score[rotation + (4*newX)] = ai.calculateScore(test);
-                    System.out.println("X: " + newX + " Rot: " + rotation + " Score: " + score[rotation + (4*newX)]);
+                    if (score[rotation + (4*newX)] > maxScore)
+                    {
+                        bestRotate = rotation;
+                        bestXColumn = j;
+                        maxScore = score[rotation + (4*newX)];
+                        maxIndex = rotation + (4*newX);
+                    }
+
 
                     for (int i = 0; i < 4; i++) {
 
@@ -382,18 +391,31 @@ public class Board extends JPanel {
                 }
                 else
                 {
-                    System.out.println("OUT OF BOUNDS");
+                    //System.out.println("OUT OF BOUNDS");
                 }
             }
             
             testPiece = testPiece.rotateRight();
         }
 
-
+        System.out.println("Max pos: " + maxIndex + " | " + maxScore + " Using Rotates: " + bestRotate + " BestX: " + bestXColumn);
+        return new int[] {bestRotate, bestXColumn};
         //pieceDropped();
         //repaint();
         //return true;
     }
+
+    private void placeBestPiece(Shape currentPiece)
+    {
+        int[] bestMove = aiMoveTest(currentPiece);
+        for(int index = 0; index < bestMove[0]; index++)
+        {
+            movePiece(currentPiece.rotateRight(), curX, curY);
+        }
+        movePiece(currentPiece, bestMove[1], curY);
+        dropDown();
+    }
+
 
     private void removeFullLines() {
 
@@ -513,6 +535,7 @@ public class Board extends JPanel {
                 case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece);}
                 //case KeyEvent.VK_SPACE -> {dropUp(curPiece, curY);}
                 case KeyEvent.VK_D -> oneLineDown();
+                case KeyEvent.VK_F -> placeBestPiece(curPiece);
             }
         }
     }
