@@ -23,6 +23,7 @@ public class Board extends JPanel {
     private Timer timer;
     private boolean isFallingFinished = false;
     private boolean isPaused = false;
+    private boolean gamestatus = false;
     private int numLinesRemoved = 0;
     private int curX = 0;
     private int curY = 0;
@@ -184,13 +185,30 @@ public class Board extends JPanel {
         curX = BOARD_WIDTH / 2 + 1;
         curY = BOARD_HEIGHT - 1 + curPiece.minY();
 
-        if (!movePiece(curPiece, curX, curY)) {
-
+        gameOver();
+        
+        if (!gamestatus)
+        {
             curPiece.setShape(Tetrominoe.NoShape);
             timer.stop();
-
             var msg = String.format("Game over. Score: %d", numLinesRemoved);
             statusbar.setText(msg);
+        }
+
+    }
+
+    private void gameOver()
+    {
+        if (!movePiece(curPiece, curX, curY)) 
+        {
+
+            gamestatus = false;
+            //return true;
+        }
+        else
+        {
+            gamestatus = true;
+            //return false;
         }
     }
 
@@ -416,8 +434,10 @@ public class Board extends JPanel {
 
                 numFullLines++;
 
-                for (int k = i; k < BOARD_HEIGHT - 1; k++) {
-                    for (int j = 0; j < BOARD_WIDTH; j++) {
+                for (int k = i; k < BOARD_HEIGHT - 1; k++) 
+                {
+                    for (int j = 0; j < BOARD_WIDTH; j++) 
+                    {
                         board[(k * BOARD_WIDTH) + j] = shapeAt(j, k + 1);
                     }
                 }

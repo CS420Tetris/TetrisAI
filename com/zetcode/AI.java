@@ -23,6 +23,7 @@ public class AI
         this.bumpinessWeight = _bumpinessWeight;
         this.holeWeight = _holeWeight;
     }
+    
 
     // Returns aggregate height of the board multiplied by its weight
     public double calculateAggregateHeight(Board board)
