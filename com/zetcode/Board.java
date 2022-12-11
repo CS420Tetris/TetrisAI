@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.security.cert.X509CRL;
 
 public class Board extends JPanel {
 
@@ -274,19 +275,81 @@ public class Board extends JPanel {
 
     private void aiMoveTest(Shape currentPiece) 
     {
-        int currentX = BOARD_WIDTH -1 - currentPiece.minX();
+        int currentX = BOARD_WIDTH -1 + currentPiece.minX();
         int currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
         //int newX = 0;
 
         double[] score = new double[40];
         //Increment through X
         //rotate
-        Shape testPiece = currentPiece;
         for(int rotation = 0; rotation < 4; rotation++)
         {
+            Shape testPiece = currentPiece;
             testPiece = testPiece.rotateRight();
+            for (int x = 0; x < 10; x++) 
+            {
+                boolean validMove = false;
+                //int moves = Math.abs(currentX - x);
 
-            for (int x = 0; x < 1; x++) 
+                //for(int index = 0; index < moves; )
+
+                while(validMove(testPiece, x, currentY -1))
+                {
+                    currentY--;
+                    validMove = true;
+                }  
+
+                if (validMove == false)
+                {
+                    score[4 * x + rotation] = 0;
+                    //System.out.println("X: " + x + " Rot: " + rotation + " Score: " + score[4 * x + rotation]);
+                    //System.out.println("invalid pos");
+                    //break;
+                
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++) 
+                    {
+                        int xx = x + testPiece.x(i);
+                        int yy = currentY - testPiece.y(i);
+                        //System.out.println("x-" + xx + " y- " + yy);
+                        board[(yy * BOARD_WIDTH) + xx] = testPiece.getShape();
+                    }
+
+                    score[4 * x + rotation] = ai.calculateScore(this);
+                    //System.out.println("X: " + x + " Rot: " + rotation + " Score: " + score[rotation * x]);
+                    //System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
+
+                    for (int i = 0; i < 4; i++) 
+                    {
+                        int xx = x + testPiece.x(i);
+                        int yy = currentY - testPiece.y(i);
+                        board[(yy * BOARD_WIDTH) + xx] = Shape.Tetrominoe.NoShape;
+                    }
+
+                }
+                currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
+                //x = BOARD_WIDTH -1 + currentPiece.minX();
+            }
+            //x = BOARD_WIDTH -1 + currentPiece.minX();
+            //currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
+
+        }
+        for(int index = 0; index < 40; index++)
+        {
+            //System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
+           // System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
+            System.out.println("Pos" + index + " " + score[index]);
+        }
+
+        //pieceDropped();
+        //repaint();
+        //return true;
+    }
+
+    /* 
+    for (int x = 0; x < 1; x++) 
             {
                 while(validMove(testPiece, currentX - 1, currentY) && currentX >= x)
                 {
@@ -322,7 +385,7 @@ public class Board extends JPanel {
                     currentY--;
                 }  */
                 
-
+                /* 
                 score[rotation * x] = ai.calculateScore(this);
                 System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
 
@@ -333,16 +396,8 @@ public class Board extends JPanel {
                     board[(yy * BOARD_WIDTH) + xx] = Shape.Tetrominoe.NoShape;
                 }
                 currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
-                currentX = BOARD_WIDTH -1 + currentPiece.minX();
-            }
-        }
-
-
-        //pieceDropped();
-        //repaint();
-        //return true;
-    }
-
+                currentX = BOARD_WIDTH - 1 + currentPiece.minX();
+            }*/
     /* 
     private void aiMoveTest(Shape newPiece) 
     {
