@@ -41,7 +41,7 @@ public class Tetris extends JFrame {
 
     public static void main(String[] args) {
 
-        int n = 1; // Number of threads
+        int n = 16; // Number of threads
         for (int i = 0; i < n; i++) {
             if(i>=8){
                 MultithreadingDemo object
