@@ -126,4 +126,9 @@ public class AI
         }
         return holeWeight * holes;
     }
+
+    public double calculateScore(Board board)
+    {
+        return (calculateAggregateHeight(board) + calculateBumpiness(board) + calculateCompleteLines(board) + calculateHoles(board));
+    }
 }

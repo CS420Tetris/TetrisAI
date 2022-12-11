@@ -2,6 +2,7 @@ package com.zetcode;
 
 import com.zetcode.Shape.Tetrominoe;
 
+import javax.security.auth.x500.X500Principal;
 //import javax.lang.model.util.ElementScanner14;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -134,7 +135,7 @@ public class Board extends JPanel {
 
         while (newY > 0) {
 
-            if (!tryMove(curPiece, curX, newY - 1)) {
+            if (!movePiece(curPiece, curX, newY - 1)) {
 
                 break;
             }
@@ -147,7 +148,7 @@ public class Board extends JPanel {
 
     private void oneLineDown() {
 
-        if (!tryMove(curPiece, curX, curY - 1)) {
+        if (!movePiece(curPiece, curX, curY - 1)) {
 
             pieceDropped();
         }
@@ -187,7 +188,7 @@ public class Board extends JPanel {
         curX = BOARD_WIDTH / 2 + 1;
         curY = BOARD_HEIGHT - 1 + curPiece.minY();
 
-        if (!tryMove(curPiece, curX, curY)) {
+        if (!movePiece(curPiece, curX, curY)) {
 
             curPiece.setShape(Tetrominoe.NoShape);
             timer.stop();
@@ -197,7 +198,7 @@ public class Board extends JPanel {
         }
     }
 
-    private boolean tryMove(Shape newPiece, int newX, int newY) {
+    private boolean movePiece(Shape newPiece, int newX, int newY) {
 
         for (int i = 0; i < 4; i++) {
 
@@ -221,6 +222,26 @@ public class Board extends JPanel {
 
         repaint();
 
+        return true;
+    }
+
+    private boolean validMove(Shape newPiece, int newX, int newY)
+    {
+        for (int i = 0; i < 4; i++) {
+
+            int x = newX + newPiece.x(i);
+            int y = newY - newPiece.y(i);
+
+            if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT) {
+
+                return false;
+            }
+
+            if (shapeAt(x, y) != Tetrominoe.NoShape) {
+
+                return false;
+            }
+        }
         return true;
     }
 
@@ -251,17 +272,86 @@ public class Board extends JPanel {
         return true;
     }
 
-    private void aiMoveTest(Shape newPiece,int newY) {
+    private void aiMoveTest(Shape currentPiece) 
+    {
+        int currentX = BOARD_WIDTH -1 - currentPiece.minX();
+        int currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
+        //int newX = 0;
 
-        //Set X to 0
-        int StartY = newY;
+        double[] score = new double[40];
+        //Increment through X
+        //rotate
+        Shape testPiece = currentPiece;
+        for(int rotation = 0; rotation < 4; rotation++)
+        {
+            testPiece = testPiece.rotateRight();
+
+            for (int x = 0; x < 1; x++) 
+            {
+                while(validMove(testPiece, currentX - 1, currentY) && currentX >= x)
+                {
+                    currentX--;
+                }
+                //movePiece(testPiece, x, currentY);
+                //System.out.println("test");
+                //int newY = curY;
+
+                while (currentY  > 0) {
+
+                    if (!validMove(testPiece, currentX, currentY - 1)) 
+                    {
+                        //score[rotation * x] = 0;
+                        break;
+                    }
+
+                    currentY--;
+                }
+
+                
+                for (int i = 0; i < 4; i++) 
+                {
+                    int xx = currentX + testPiece.x(i);
+                    int yy = currentY - testPiece.y(i);
+                    System.out.println("x-" + xx + " y- " + yy);
+                    board[(yy * BOARD_WIDTH) + xx] = testPiece.getShape();
+                }
+                //System.out.println("Lines Complete: " + ai.calculateCompleteLines(this));
+              /* 
+                while(validMove(testPiece, x, currentY -1))
+                {
+                    currentY--;
+                }  */
+                
+
+                score[rotation * x] = ai.calculateScore(this);
+                System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
+
+                for (int i = 0; i < 4; i++) {
+
+                    int xx = currentX + testPiece.x(i);
+                    int yy = currentY - testPiece.y(i);
+                    board[(yy * BOARD_WIDTH) + xx] = Shape.Tetrominoe.NoShape;
+                }
+                currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
+                currentX = BOARD_WIDTH -1 + currentPiece.minX();
+            }
+        }
+
+
+        //pieceDropped();
+        //repaint();
+        //return true;
+    }
+
+    /* 
+    private void aiMoveTest(Shape newPiece) 
+    {
+        int StartY = 0;
         int newX = 0;
         int x = 0;
 
         //Increment through X
         //rotate
-         
-            newX = 0;
             loop1:
             while (newX<10)
             {   
@@ -314,7 +404,7 @@ public class Board extends JPanel {
 
         //repaint();
         //return true;
-    }
+    }*/
 
     private void removeFullLines() {
 
@@ -427,12 +517,12 @@ public class Board extends JPanel {
             switch (keycode) {
 
                 case KeyEvent.VK_P -> pause();
-                case KeyEvent.VK_LEFT -> tryMove(curPiece, curX - 1, curY);
-                case KeyEvent.VK_RIGHT -> tryMove(curPiece, curX + 1, curY);
-                case KeyEvent.VK_DOWN -> tryMove(curPiece.rotateRight(), curX, curY);
-                case KeyEvent.VK_UP -> tryMove(curPiece.rotateLeft(), curX, curY);
-                //case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece, curY);}
-                case KeyEvent.VK_SPACE -> {dropDown();}
+                case KeyEvent.VK_LEFT -> movePiece(curPiece, curX - 1, curY);
+                case KeyEvent.VK_RIGHT -> movePiece(curPiece, curX + 1, curY);
+                case KeyEvent.VK_DOWN -> movePiece(curPiece.rotateRight(), curX, curY);
+                case KeyEvent.VK_UP -> movePiece(curPiece.rotateLeft(), curX, curY);
+                case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece);}
+                //case KeyEvent.VK_SPACE -> {dropDown();}
                 case KeyEvent.VK_D -> oneLineDown();
             }
         }
