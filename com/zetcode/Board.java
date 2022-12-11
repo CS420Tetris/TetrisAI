@@ -2,7 +2,7 @@ package com.zetcode;
 
 import com.zetcode.Shape.Tetrominoe;
 
-import javax.lang.model.util.ElementScanner14;
+//import javax.lang.model.util.ElementScanner14;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -28,10 +28,12 @@ public class Board extends JPanel {
     private JLabel statusbar;
     private Shape curPiece;
     private Tetrominoe[] board;
+    private AI ai;
 
-    public Board(Tetris parent) {
-
+    public Board(Tetris parent) 
+    {
         initBoard(parent);
+        ai = new AI(1, 1, 1, 1);
     }
 
     private void initBoard(Tetris parent) {
@@ -54,7 +56,7 @@ public class Board extends JPanel {
         return (int) getSize().getHeight() / BOARD_HEIGHT;
     }
 
-    private Tetrominoe shapeAt(int x, int y) {
+    public Tetrominoe shapeAt(int x, int y) {
 
         return board[(y * BOARD_WIDTH) + x];
     }
@@ -167,9 +169,12 @@ public class Board extends JPanel {
             int y = curY - curPiece.y(i);
             board[(y * BOARD_WIDTH) + x] = curPiece.getShape();
         }
-
+        //System.out.println("Lines Complete: " + ai.calculateCompleteLines(this));
         removeFullLines();
 
+        //System.out.println("Ag height: " + ai.calculateAggregateHeight(this));
+        //System.out.println("AgBump Heights: " + ai.calculateBumpiness(this));
+        //System.out.println("Holes: " + ai.calculateHoles(this));
         if (!isFallingFinished) {
 
             newPiece();
