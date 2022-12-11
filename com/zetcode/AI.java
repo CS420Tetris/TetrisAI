@@ -22,6 +22,7 @@ public class AI
         this.completeLinesWeight = _completeLinesWeight;
         this.bumpinessWeight = _bumpinessWeight;
         this.holeWeight = _holeWeight;
+        //normalize();
     }
 
     // Returns aggregate height of the board multiplied by its weight
@@ -33,7 +34,7 @@ public class AI
             for (int y = 21; y >= 0; y--) 
             {
 
-                if (board.shapeAt(x, y) != Tetrominoe.NoShape) 
+                if (!board.shapeAt(x, y).equals(Shape.Tetrominoe.NoShape)) 
                 {
                     aggregateHeight += y + 1;
                     break;
@@ -51,8 +52,8 @@ public class AI
         {
             for (int y = 21; y >= 0; y--) 
             {
-
-                if (board[(y * 10) + x] != Tetrominoe.NoShape) 
+                //yy * BOARD_WIDTH) + xx 
+                if (!board[(y * 10) + x].equals(Shape.Tetrominoe.NoShape))
                 {
                     aggregateHeight += y + 1;
                     break;
@@ -76,7 +77,7 @@ public class AI
             for (int x = 0; x < 10; x++) 
             {
 
-                if (board.shapeAt(x, y) == Tetrominoe.NoShape) 
+                if (board.shapeAt(x, y).equals(Shape.Tetrominoe.NoShape)) 
                 {
                     lineIsFull = false;
                     break;
@@ -103,7 +104,7 @@ public class AI
             for (int x = 0; x < 10; x++) 
             {
 
-                if (board[(y * 10) + x] == Tetrominoe.NoShape) 
+                if (board[(y * 10) + x].equals(Shape.Tetrominoe.NoShape)) 
                 {
                     lineIsFull = false;
                     break;
@@ -130,7 +131,7 @@ public class AI
             currentHeight = 0;
             for (int y = 21; y >= 0; y--) 
             {
-                if (board.shapeAt(x, y) != Tetrominoe.NoShape) 
+                if (!board.shapeAt(x, y).equals(Shape.Tetrominoe.NoShape)) 
                 {
                     currentHeight = y + 1;
                     break;
@@ -158,7 +159,7 @@ public class AI
             currentHeight = 0;
             for (int y = 21; y >= 0; y--) 
             {
-                if (board[(y * 10) + x] != Tetrominoe.NoShape) 
+                if (!board[(y * 10) + x].equals(Shape.Tetrominoe.NoShape)) 
                 {
                     currentHeight = y + 1;
                     break;
@@ -185,7 +186,7 @@ public class AI
 
             for (int y = 0; y < 22; y++) 
             {
-                if (board.shapeAt(x, y) == Tetrominoe.NoShape) 
+                if (board.shapeAt(x, y).equals(Tetrominoe.NoShape)) 
                 {
                     isHole = true;
                 }
@@ -212,7 +213,7 @@ public class AI
 
             for (int y = 0; y < 22; y++) 
             {
-                if (board[(y * 10) + x] == Tetrominoe.NoShape) 
+                if (board[(y * 10) + x].equals(Shape.Tetrominoe.NoShape))
                 {
                     isHole = true;
                 }
@@ -236,5 +237,14 @@ public class AI
     public double calculateScore(Tetrominoe[] board)
     {
         return (calculateAggregateHeight(board) + calculateBumpiness(board) + calculateCompleteLines(board) + calculateHoles(board));
+    }
+
+    public void normalize()
+    {
+        double norm = Math.sqrt(heightWeight*heightWeight + completeLinesWeight*completeLinesWeight + holeWeight*holeWeight + bumpinessWeight*bumpinessWeight);
+        heightWeight = heightWeight / norm;
+        completeLinesWeight = completeLinesWeight / norm;
+        holeWeight = holeWeight / norm;
+        bumpinessWeight = bumpinessWeight / norm;
     }
 }
