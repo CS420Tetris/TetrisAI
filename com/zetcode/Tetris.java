@@ -1,7 +1,7 @@
 package com.zetcode;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+//import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -42,7 +42,7 @@ public class Tetris extends JFrame {
 
     public static void main(String[] args) {
 
-        int n = 16; // Number of threads
+        int n = 1; // Number of threads
         for (int i = 0; i < n; i++) {
             MultithreadingDemo object
             = new MultithreadingDemo();
