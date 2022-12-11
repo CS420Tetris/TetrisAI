@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.security.cert.X509CRL;
 
 public class Board extends JPanel {
 
@@ -171,12 +170,8 @@ public class Board extends JPanel {
             int y = curY - curPiece.y(i);
             board[(y * BOARD_WIDTH) + x] = curPiece.getShape();
         }
-        //System.out.println("Lines Complete: " + ai.calculateCompleteLines(this));
         removeFullLines();
 
-        //System.out.println("Ag height: " + ai.calculateAggregateHeight(this));
-        //System.out.println("AgBump Heights: " + ai.calculateBumpiness(this));
-        //System.out.println("Holes: " + ai.calculateHoles(this));
         if (!isFallingFinished) {
 
             newPiece();
@@ -245,6 +240,37 @@ public class Board extends JPanel {
         }
         return true;
     }
+    private void dropUp(Shape newPiece, int newX, int newY) {
+
+        //int newY = curY;
+
+        while (newY < 20) {
+
+            if (!aiMove(newPiece, curX, newY + 1)) {
+
+                break;
+            }
+
+            newY++;
+        }
+    }
+    private void aidropDown(Shape newPiece, int newX,int newY) 
+    {
+
+        while (newY > 0) {
+
+            if (!validMove(newPiece, newX, newY - 1)) {
+
+                break;
+            }
+
+            newY--;
+        }
+        //curY=newY;
+        //curPiece=newPiece;
+        //repaint();
+        //pieceDropped();
+    }
 
     private boolean aiMove(Shape newPiece, int newX, int newY) {
 
@@ -258,13 +284,13 @@ public class Board extends JPanel {
                 return false;
             }
 
-            if (shapeAt(x, y) != Tetrominoe.NoShape) {
+            //if (shapeAt(x, y) != Tetrominoe.NoShape) {
 
-                return false;
-            }
+            //    return false;
+            //}
         }
 
-        curPiece = newPiece;
+        //curPiece = newPiece;
         //curX = newX;
         //curY = newY;
 
@@ -275,165 +301,60 @@ public class Board extends JPanel {
 
     private void aiMoveTest(Shape currentPiece) 
     {
-        int currentX = BOARD_WIDTH -1 + currentPiece.minX();
-        int currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
-        //int newX = 0;
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        //int currentX = BOARD_WIDTH -1 - currentPiece.minX();
+        //int currentY = 10;
+        int newX = 0;
+        int newY = 10;
+        int x = 0;
+
+        boolean inBounds = true;
+
+        int[] xLocations = {0,1,2,3,4,5,6,7,8,9};
 
         double[] score = new double[40];
         //Increment through X
         //rotate
+
+        Shape testPiece = currentPiece;
+        Tetrominoe[] test = new Tetrominoe[board.length];
+        for (int i = 0; i < board.length; i++)
+        {
+            test[i] = board[i];
+        } 
+        
         for(int rotation = 0; rotation < 4; rotation++)
         {
-            Shape testPiece = currentPiece;
-            testPiece = testPiece.rotateRight();
-            for (int x = 0; x < 10; x++) 
+            newX = 0;
+
+            for (int j = 0; j<10; j++)
             {
-                boolean validMove = false;
-                //int moves = Math.abs(currentX - x);
-
-                //for(int index = 0; index < moves; )
-
-                while(validMove(testPiece, x, currentY -1))
-                {
-                    currentY--;
-                    validMove = true;
-                }  
-
-                if (validMove == false)
-                {
-                    score[4 * x + rotation] = 0;
-                    //System.out.println("X: " + x + " Rot: " + rotation + " Score: " + score[4 * x + rotation]);
-                    //System.out.println("invalid pos");
-                    //break;
-                
-                }
-                else
-                {
-                    for (int i = 0; i < 4; i++) 
-                    {
-                        int xx = x + testPiece.x(i);
-                        int yy = currentY - testPiece.y(i);
-                        //System.out.println("x-" + xx + " y- " + yy);
-                        board[(yy * BOARD_WIDTH) + xx] = testPiece.getShape();
-                    }
-
-                    score[4 * x + rotation] = ai.calculateScore(this);
-                    //System.out.println("X: " + x + " Rot: " + rotation + " Score: " + score[rotation * x]);
-                    //System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
-
-                    for (int i = 0; i < 4; i++) 
-                    {
-                        int xx = x + testPiece.x(i);
-                        int yy = currentY - testPiece.y(i);
-                        board[(yy * BOARD_WIDTH) + xx] = Shape.Tetrominoe.NoShape;
-                    }
-
-                }
-                currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
-                //x = BOARD_WIDTH -1 + currentPiece.minX();
-            }
-            //x = BOARD_WIDTH -1 + currentPiece.minX();
-            //currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
-
-        }
-        for(int index = 0; index < 40; index++)
-        {
-            //System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
-           // System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
-            System.out.println("Pos" + index + " " + score[index]);
-        }
-
-        //pieceDropped();
-        //repaint();
-        //return true;
-    }
-
-    /* 
-    for (int x = 0; x < 1; x++) 
-            {
-                while(validMove(testPiece, currentX - 1, currentY) && currentX >= x)
-                {
-                    currentX--;
-                }
-                //movePiece(testPiece, x, currentY);
-                //System.out.println("test");
-                //int newY = curY;
-
-                while (currentY  > 0) {
-
-                    if (!validMove(testPiece, currentX, currentY - 1)) 
-                    {
-                        //score[rotation * x] = 0;
-                        break;
-                    }
-
-                    currentY--;
-                }
-
-                
-                for (int i = 0; i < 4; i++) 
-                {
-                    int xx = currentX + testPiece.x(i);
-                    int yy = currentY - testPiece.y(i);
-                    System.out.println("x-" + xx + " y- " + yy);
-                    board[(yy * BOARD_WIDTH) + xx] = testPiece.getShape();
-                }
-                //System.out.println("Lines Complete: " + ai.calculateCompleteLines(this));
-              /* 
-                while(validMove(testPiece, x, currentY -1))
-                {
-                    currentY--;
-                }  */
-                
-                /* 
-                score[rotation * x] = ai.calculateScore(this);
-                System.out.println("X: " + x + " Rot: " + rotation + " AggScore: " + ai.calculateAggregateHeight(this) + " completedLines " + ai.calculateCompleteLines(this) + " bumpiness " + ai.calculateBumpiness(this) + " holes " + ai.calculateHoles(this));
-
-                for (int i = 0; i < 4; i++) {
-
-                    int xx = currentX + testPiece.x(i);
-                    int yy = currentY - testPiece.y(i);
-                    board[(yy * BOARD_WIDTH) + xx] = Shape.Tetrominoe.NoShape;
-                }
-                currentY = BOARD_HEIGHT - 1 + currentPiece.minY();
-                currentX = BOARD_WIDTH - 1 + currentPiece.minX();
-            }*/
-    /* 
-    private void aiMoveTest(Shape newPiece) 
-    {
-        int StartY = 0;
-        int newX = 0;
-        int x = 0;
-
-        //Increment through X
-        //rotate
-            loop1:
-            while (newX<10)
-            {   
+                newY = 10;
+                newX = xLocations[j];
+                inBounds = true;
                 
                 //Increment through segments of Piece
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 4; i++) 
+                {
 
                     //Set new segment location
-                    x = newX + newPiece.x(i);
+                    x = newX + testPiece.x(i);
 
                     //If out of bounds stop incrementing X
-                    if (x >= BOARD_WIDTH || newY >= BOARD_HEIGHT) {
-                        break loop1;
+                    if (x >= BOARD_WIDTH || newY >= BOARD_HEIGHT || x < 0) {
+                        inBounds = false;
                     }
 
-                    
                 }
-                
-                    
-                for (int j = 0; j < 4; j++)
-                {  
-                    newY = StartY;
+
+                if(inBounds)
+                {
+                    dropUp(testPiece,newX,newY);
                     //Check if newY hit bottom      MAKE SEPERATE METHOD
                     while (newY > 0) {
                         
 
-                        if (!aiMove(newPiece, newX, newY - 1)) {
+                        if (!aiMove(testPiece, newX, newY - 1)) {
             
                             break;
                         }
@@ -442,24 +363,38 @@ public class Board extends JPanel {
                         
                         
                     }
-                    newPiece.rotateRight();
-                    System.out.println(newX);
+
+                    for (int i = 0; i < 4; i++) {
+
+                        int xx = newX + testPiece.x(i);
+                        int yy = newY - testPiece.y(i);
+                        test[(yy * BOARD_WIDTH) + xx] = testPiece.getShape();
+                    } 
+                    
+                    score[rotation + (4*newX)] = ai.calculateScore(test);
+                    System.out.println("X: " + newX + " Rot: " + rotation + " Score: " + score[rotation + (4*newX)]);
+
+                    for (int i = 0; i < 4; i++) {
+
+                        int xx = newX + testPiece.x(i);
+                        int yy = newY - testPiece.y(i);
+                        test[(yy * BOARD_WIDTH) + xx ] = Shape.Tetrominoe.NoShape;
+                    }
                 }
-                
-                //Check Score
-                //curX = newX;
-                //curY = newY;
-                
-                
-
-                //pause();
-                newX++;
+                else
+                {
+                    System.out.println("OUT OF BOUNDS");
+                }
             }
-        
+            
+            testPiece = testPiece.rotateRight();
+        }
 
+
+        //pieceDropped();
         //repaint();
         //return true;
-    }*/
+    }
 
     private void removeFullLines() {
 
@@ -577,7 +512,7 @@ public class Board extends JPanel {
                 case KeyEvent.VK_DOWN -> movePiece(curPiece.rotateRight(), curX, curY);
                 case KeyEvent.VK_UP -> movePiece(curPiece.rotateLeft(), curX, curY);
                 case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece);}
-                //case KeyEvent.VK_SPACE -> {dropDown();}
+                //case KeyEvent.VK_SPACE -> {dropUp(curPiece, curY);}
                 case KeyEvent.VK_D -> oneLineDown();
             }
         }
