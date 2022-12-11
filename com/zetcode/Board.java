@@ -246,8 +246,9 @@ public class Board extends JPanel {
         return true;
     }
 
-    private void aiMoveTest(Shape newPiece,int newY) {
+    private void aiMoveTest(Shape newPiece) {
 
+        int newY = 8;
         //Set X to 0
         int StartY = newY;
         int newX = 0;
@@ -256,7 +257,7 @@ public class Board extends JPanel {
         //Increment through X
         //rotate
          
-            newX = 0;
+            //newX = 0;
             loop1:
             while (newX<10)
             {   
@@ -268,7 +269,7 @@ public class Board extends JPanel {
                     x = newX + newPiece.x(i);
 
                     //If out of bounds stop incrementing X
-                    if (x >= BOARD_WIDTH || newY >= BOARD_HEIGHT) {
+                    if (x >= BOARD_WIDTH-1 || newY >= BOARD_HEIGHT) {
                         break loop1;
                     }
 
@@ -426,7 +427,7 @@ public class Board extends JPanel {
                 case KeyEvent.VK_RIGHT -> tryMove(curPiece, curX + 1, curY);
                 case KeyEvent.VK_DOWN -> tryMove(curPiece.rotateRight(), curX, curY);
                 case KeyEvent.VK_UP -> tryMove(curPiece.rotateLeft(), curX, curY);
-                case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece, curY);}
+                case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece);}
                     //dropDown();}
                 case KeyEvent.VK_D -> oneLineDown();
             }

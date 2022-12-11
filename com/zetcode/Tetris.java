@@ -15,12 +15,11 @@ public class Tetris extends JFrame {
 
     private JLabel statusbar;
 
-    public Tetris() {
-
-        initUI();
+    public Tetris(int x, int y) {
+        initUI(x, y);
     }
 
-    private void initUI() {
+    private void initUI(int x, int y) {
 
         statusbar = new JLabel(" 0");
         add(statusbar, BorderLayout.SOUTH);
@@ -32,7 +31,7 @@ public class Tetris extends JFrame {
         setTitle("Tetris");
         setSize(200, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLocation(x*200,y);
     }
 
     JLabel getStatusBar() {
@@ -44,19 +43,26 @@ public class Tetris extends JFrame {
 
         int n = 16; // Number of threads
         for (int i = 0; i < n; i++) {
-            MultithreadingDemo object
-            = new MultithreadingDemo();
-            object.start();
+            if(i>=8){
+                MultithreadingDemo object
+                = new MultithreadingDemo(i-8, 0);
+                object.start();
+
+            }else{
+                MultithreadingDemo object
+                = new MultithreadingDemo(i, 400);
+                object.start();
+            }
         }
     }
 }
 
 
 class MultithreadingDemo extends Thread {
-    public void run() {
+    public MultithreadingDemo(int x, int y) {
         try {
             // Displaying the thread that is running
-            var game = new Tetris();
+            var game = new Tetris(x, y);
             game.setVisible(true);
         }
         catch (Exception e) {
