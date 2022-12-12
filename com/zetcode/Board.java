@@ -16,7 +16,7 @@ public class Board extends JPanel {
 
     private final int BOARD_WIDTH = 10;
     private final int BOARD_HEIGHT = 22;
-    private final int PERIOD_INTERVAL = 1000;
+    private final int PERIOD_INTERVAL = 100;
 
     private Timer timer;
     private boolean isFallingFinished = false;
@@ -33,7 +33,7 @@ public class Board extends JPanel {
     {
         initBoard(parent);
         //ai = new AI(1, 1, 1, 1);
-        ai = new AI(-.5, .76, -.35, -.18);
+        ai = new AI( -0.510066, 0.760666, -0.35663, -0.184483);
     }
 
     private void initBoard(Tetris parent) {
@@ -314,7 +314,7 @@ public class Board extends JPanel {
         double[] score = new double[40];
         int bestRotate = 0;
         int bestXColumn = 0;
-        double maxScore = 0;
+        double maxScore = Double.NEGATIVE_INFINITY;
         int maxIndex = 0;
 
 
@@ -410,11 +410,17 @@ public class Board extends JPanel {
 
     private void placeBestPiece(Shape currentPiece)
     {
+        
         int[] bestMove = aiMoveTest(currentPiece);
-        for(int index = 0; index < bestMove[0]; index++)
+        
+
+        for(int i = 0;i<bestMove[0]; i++)
         {
-            movePiece(currentPiece.rotateRight(), curX, curY);
+            System.out.println("FUCK\t" + bestMove[0]);
+            //movePiece(currentPiece.rotateRight(), curX, curY);//currentPiece.rotateRight();
+            currentPiece = currentPiece.rotateRight();
         }
+        
         movePiece(currentPiece, bestMove[1], curY);
         dropDown();
     }
@@ -492,14 +498,15 @@ public class Board extends JPanel {
         }
     }
 
-    private void doGameCycle() {
-
+    private void doGameCycle() 
+    {
         update();
         repaint();
     }
 
     private void update() {
 
+        placeBestPiece(curPiece);
         if (isPaused) {
 
             return;

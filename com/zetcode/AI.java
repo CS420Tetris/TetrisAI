@@ -22,7 +22,7 @@ public class AI
         this.completeLinesWeight = _completeLinesWeight;
         this.bumpinessWeight = _bumpinessWeight;
         this.holeWeight = _holeWeight;
-        normalize();
+        //normalize();
     }
 
     // Returns aggregate height of the board multiplied by its weight
@@ -60,10 +60,10 @@ public class AI
                 }
             }
         }
-        for(int index = 0; index < board.length; index++)
-        {
-            System.out.println(index + " " + board[index].toString());
-        }
+        // for(int index = 0; index < board.length; index++)
+        // {
+        //     System.out.println(index + " " + board[index].toString());
+        // }
         return aggregateHeight * heightWeight;
     }
     
