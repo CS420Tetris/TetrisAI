@@ -264,7 +264,7 @@ public class Board extends JPanel {
 
         while (newY < 20) {
 
-            if (!aiMove(newPiece, curX, newY + 1)) {
+            if (!aiMoveup(newPiece, curX, newY + 1)) {
 
                 break;
             }
@@ -290,6 +290,28 @@ public class Board extends JPanel {
         //pieceDropped();
     }
 
+    private boolean aiMoveup(Shape newPiece, int newX, int newY) {
+
+        for (int i = 0; i < 4; i++) {
+
+            int x = newX + newPiece.x(i);
+            int y = newY - newPiece.y(i); //What this do
+
+            if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT) {
+
+                return false;
+            }
+        }
+
+        //curPiece = newPiece;
+        //curX = newX;
+        //curY = newY;
+
+        //repaint();
+
+        return true;
+    }
+
     private boolean aiMove(Shape newPiece, int newX, int newY) {
 
         for (int i = 0; i < 4; i++) {
@@ -302,10 +324,10 @@ public class Board extends JPanel {
                 return false;
             }
 
-            //if (shapeAt(x, y) != Tetrominoe.NoShape) {
+            if (shapeAt(x, y) != Tetrominoe.NoShape) {
 
-            //    return false;
-            //}
+                return false;
+            }
         }
 
         //curPiece = newPiece;
@@ -389,7 +411,7 @@ public class Board extends JPanel {
                     } 
                     
                     score[rotation + (4*newX)] = ai.calculateScore(test);
-                    System.out.println("X: " + newX + " Rot: " + rotation + " Score: " + score[rotation + (4*newX)]);
+                    System.out.println("X: " + newX + " Rot: " + rotation + " Score: " + score[rotation + (4*newX)] + "\t Bumpiness: " + ai.calculateBumpiness(test)+ "\t AH: " + ai.calculateAggregateHeight(test));
 
                     for (int i = 0; i < 4; i++) {
 

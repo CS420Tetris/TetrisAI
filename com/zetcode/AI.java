@@ -56,6 +56,7 @@ public class AI
                 if (board[(y * 10) + x] != Tetrominoe.NoShape) 
                 {
                     aggregateHeight += y + 1;
+                    System.out.println("X:" + x + "\tY:\t" + y + "\tAH:" + aggregateHeight);
                     break;
                 }
             }
