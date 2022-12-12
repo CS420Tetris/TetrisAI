@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 
 public class Board extends JPanel {
 
@@ -33,8 +32,8 @@ public class Board extends JPanel {
     public Board(Tetris parent) 
     {
         initBoard(parent);
-        //ai = new AI(0.1, 1, 0.25, 0);
-        ai = new AI(-0.51066, 0.760666, -0.184483, -0.35663);
+        //ai = new AI(1, 1, 1, 1);
+        ai = new AI(-.5, .76, -.35, -.18);
     }
 
     private void initBoard(Tetris parent) {
@@ -319,7 +318,8 @@ public class Board extends JPanel {
         int maxIndex = 0;
 
 
-        Shape testPiece = currentPiece;
+        Shape testPiece = new Shape();
+        testPiece.setShape(currentPiece.getShape());
         Tetrominoe[] test = new Tetrominoe[board.length];
         for (int i = 0; i < board.length; i++)
         {
@@ -373,6 +373,9 @@ public class Board extends JPanel {
                     } 
                     
                     score[rotation + (4*newX)] = ai.calculateScore(test);
+                    //System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX) + " "]);
+                    System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX)]);
+
                     if (score[rotation + (4*newX)] > maxScore)
                     {
                         bestRotate = rotation;
