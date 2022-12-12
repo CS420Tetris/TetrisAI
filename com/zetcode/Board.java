@@ -33,7 +33,7 @@ public class Board extends JPanel {
     {
         initBoard(parent);
         //ai = new AI(1, 1, 1, 1);
-        ai = new AI(1, 1, 1, 1);
+        ai = new AI(-.5, .76, -.35, -.18);
     }
 
     private void initBoard(Tetris parent) {
@@ -283,10 +283,10 @@ public class Board extends JPanel {
                 return false;
             }
 
-            //if (shapeAt(x, y) != Tetrominoe.NoShape) {
+            if (shapeAt(x, y) != Tetrominoe.NoShape) {
 
-            //    return false;
-            //}
+                return false;
+            }
         }
 
         //curPiece = newPiece;
@@ -373,6 +373,7 @@ public class Board extends JPanel {
                     } 
                     
                     score[rotation + (4*newX)] = ai.calculateScore(test);
+                    //System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX) + " "]);
                     System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX)]);
 
                     if (score[rotation + (4*newX)] > maxScore)
