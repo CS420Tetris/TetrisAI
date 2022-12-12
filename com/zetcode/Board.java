@@ -33,7 +33,7 @@ public class Board extends JPanel {
     public Board(Tetris parent) 
     {
         initBoard(parent);
-        //ai = new AI(1, 1, 1, 1);
+        //ai = new AI(0.1, 1, 0.25, 0);
         ai = new AI(-0.51066, 0.760666, -0.184483, -0.35663);
     }
 
@@ -110,7 +110,7 @@ public class Board extends JPanel {
                 if (shape != Tetrominoe.NoShape) {
 
                     drawSquare(g, j * squareWidth(),
-                            boardTop + i * squareHeight(), shape);
+                    boardTop + i * squareHeight(), shape);
                 }
             }
         }
@@ -284,10 +284,10 @@ public class Board extends JPanel {
                 return false;
             }
 
-            //if (shapeAt(x, y) != Tetrominoe.NoShape) {
+            if (shapeAt(x, y) != Tetrominoe.NoShape) {
 
-            //    return false;
-            //}
+                return false;
+            }
         }
 
         //curPiece = newPiece;
@@ -301,7 +301,7 @@ public class Board extends JPanel {
 
     private int[] aiMoveTest(Shape currentPiece) 
     {
-        //System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         //int currentX = BOARD_WIDTH -1 - currentPiece.minX();
         //int currentY = 10;
         int newX = 0;
