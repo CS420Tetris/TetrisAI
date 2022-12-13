@@ -1,5 +1,6 @@
 package com.zetcode;
 
+import com.Trainer;
 import com.zetcode.Shape.Tetrominoe;
 
 import javax.swing.JLabel;
@@ -16,7 +17,7 @@ public class Board extends JPanel {
 
     private final int BOARD_WIDTH = 10;
     private final int BOARD_HEIGHT = 22;
-    private final int PERIOD_INTERVAL = 1000;
+    private final int PERIOD_INTERVAL = 1;
 
     private Timer timer;
     private boolean isFallingFinished = false;
@@ -27,14 +28,32 @@ public class Board extends JPanel {
     private JLabel statusbar;
     private Shape curPiece;
     private Tetrominoe[] board;
-    private AI ai;
+    private Trainer trains;
+    private boolean gameStatus = true;
+    // private AI ai;
 
-    public Board(Tetris parent) 
+    public Board(Tetris parent, Double[] weights) 
     {
         initBoard(parent);
         //ai = new AI(1, 1, 1, 1);
-        ai = new AI( -0.510066, 0.760666, -0.184483, -0.35663);
+        //ai = new AI( -0.510066, 0.760666, -0.184483, -0.35663);
+        trains = new Trainer(weights); //= train;
+        //trains.generateRandomCandidate();
+        //trains.normalize();
+        trains.computeFitness();
+        
     }
+
+    // public Board(Tetris parent, Double[] parent1, Double[] parent2, int score1, int score2) 
+    // {
+    //     initBoard(parent);
+    //     //ai = new AI(1, 1, 1, 1);
+    //     //ai = new AI( -0.510066, 0.760666, -0.184483, -0.35663);
+    //     trains = new Trainer(); //= train;        
+    //     trains.crossOver(parent1, parent2, score1, score2);
+    //     trains.computeFitness();
+        
+    // }
 
     private void initBoard(Tetris parent) {
 
@@ -187,7 +206,11 @@ public class Board extends JPanel {
 
             curPiece.setShape(Tetrominoe.NoShape);
             timer.stop();
-
+            gameStatus = false;
+            
+            //setVisible(false);
+            Thread.currentThread().interrupt();
+            //return;
             var msg = String.format("Game over. Score: %d", numLinesRemoved);
             statusbar.setText(msg);
         }
@@ -265,10 +288,10 @@ public class Board extends JPanel {
                 return false;
             }
 
-            //if (shapeAt(x, y) != Tetrominoe.NoShape) {
+            if (shapeAt(x, y) != Tetrominoe.NoShape) {
 
-            //    return false;
-            //}
+                return false;
+            }
         }
 
         curPiece = newPiece;
@@ -310,7 +333,7 @@ public class Board extends JPanel {
 
     private int[] aiMoveTest(Shape currentPiece) 
     {
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        //System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         //int currentX = BOARD_WIDTH -1 - currentPiece.minX();
         //int currentY = 10;
         int newX = 0;
@@ -382,9 +405,9 @@ public class Board extends JPanel {
                         test[(yy * BOARD_WIDTH) + xx] = testPiece.getShape();
                     } 
                     
-                    score[rotation + (4*newX)] = ai.calculateScore(test);
+                    score[rotation + (4*newX)] = trains.getAI().calculateScore(test);
                     //System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX) + " "]);
-                    System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX)] + "\tAH:" + ai.calculateAggregateHeight(test) + "\tBP: " + ai.calculateBumpiness(test) + "\tHoles: " + ai.calculateHoles(test));
+                    //System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX)] + "\tAH:" + trains.getAI().calculateAggregateHeight(test) + "\tBP: " + trains.getAI().calculateBumpiness(test) + "\tHoles: " + trains.getAI().calculateHoles(test));
 
                     if (score[rotation + (4*newX)] > maxScore)
                     {
@@ -411,7 +434,7 @@ public class Board extends JPanel {
             testPiece = testPiece.rotateRight();
         }
 
-        System.out.println("Max pos: " + maxIndex + " | " + maxScore + " Using Rotates: " + bestRotate + " BestX: " + bestXColumn);
+        //System.out.println("Max pos: " + maxIndex + " | " + maxScore + " Using Rotates: " + bestRotate + " BestX: " + bestXColumn);
         return new int[] {bestRotate, bestXColumn};
         //pieceDropped();
         //repaint();
@@ -426,12 +449,11 @@ public class Board extends JPanel {
 
         for(int i = 0;i<bestMove[0]; i++)
         {
-            System.out.println("FUCK\t" + bestMove[0]);
             //movePiece(currentPiece.rotateRight(), curX, curY);//currentPiece.rotateRight();
             currentPiece = currentPiece.rotateRight();
         }
         
-        aimovePiece(currentPiece, bestMove[1], curY);
+        movePiece(currentPiece, bestMove[1], curY);
         dropDown();
     }
 
@@ -516,7 +538,7 @@ public class Board extends JPanel {
 
     private void update() {
 
-        //placeBestPiece(curPiece);
+        placeBestPiece(curPiece);
         if (isPaused) {
 
             return;
@@ -558,5 +580,20 @@ public class Board extends JPanel {
                 case KeyEvent.VK_F -> placeBestPiece(curPiece);
             }
         }
+    }
+
+    public int getScore()
+    {
+        return numLinesRemoved;
+    }
+    
+    public boolean getStatus()
+    {
+        return gameStatus;
+    }
+
+    public Trainer getTrainer()
+    {
+        return trains;
     }
 }
