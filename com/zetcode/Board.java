@@ -16,7 +16,7 @@ public class Board extends JPanel {
 
     private final int BOARD_WIDTH = 10;
     private final int BOARD_HEIGHT = 22;
-    private final int PERIOD_INTERVAL = 100;
+    private final int PERIOD_INTERVAL = 1000;
 
     private Timer timer;
     private boolean isFallingFinished = false;
@@ -33,7 +33,7 @@ public class Board extends JPanel {
     {
         initBoard(parent);
         //ai = new AI(1, 1, 1, 1);
-        ai = new AI( -0.510066, 0.760666, -0.35663, -0.184483);
+        ai = new AI( -0.510066, 0.760666, -0.184483, -0.35663);
     }
 
     private void initBoard(Tetris parent) {
@@ -253,23 +253,33 @@ public class Board extends JPanel {
             newY++;
         }
     }
-    private void aidropDown(Shape newPiece, int newX,int newY) 
-    {
+    private boolean aimovePiece(Shape newPiece, int newX, int newY) {
 
-        while (newY > 0) {
+        for (int i = 0; i < 4; i++) {
 
-            if (!validMove(newPiece, newX, newY - 1)) {
+            int x = newX + newPiece.x(i);
+            int y = newY - newPiece.y(i); //What this do
 
-                break;
+            if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT) {
+
+                return false;
             }
 
-            newY--;
+            //if (shapeAt(x, y) != Tetrominoe.NoShape) {
+
+            //    return false;
+            //}
         }
-        //curY=newY;
-        //curPiece=newPiece;
-        //repaint();
-        //pieceDropped();
+
+        curPiece = newPiece;
+        curX = newX;
+        curY = newY;
+
+        repaint();
+
+        return true;
     }
+
 
     private boolean aiMove(Shape newPiece, int newX, int newY) {
 
@@ -374,7 +384,7 @@ public class Board extends JPanel {
                     
                     score[rotation + (4*newX)] = ai.calculateScore(test);
                     //System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX) + " "]);
-                    System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX)]);
+                    System.out.println("rotates " + rotation + " xCol " + newX + " | " + score[rotation + (4*newX)] + "\tAH:" + ai.calculateAggregateHeight(test) + "\tBP: " + ai.calculateBumpiness(test) + "\tHoles: " + ai.calculateHoles(test));
 
                     if (score[rotation + (4*newX)] > maxScore)
                     {
@@ -421,7 +431,7 @@ public class Board extends JPanel {
             currentPiece = currentPiece.rotateRight();
         }
         
-        movePiece(currentPiece, bestMove[1], curY);
+        aimovePiece(currentPiece, bestMove[1], curY);
         dropDown();
     }
 
@@ -506,7 +516,7 @@ public class Board extends JPanel {
 
     private void update() {
 
-        placeBestPiece(curPiece);
+        //placeBestPiece(curPiece);
         if (isPaused) {
 
             return;
@@ -542,7 +552,7 @@ public class Board extends JPanel {
                 case KeyEvent.VK_RIGHT -> movePiece(curPiece, curX + 1, curY);
                 case KeyEvent.VK_DOWN -> movePiece(curPiece.rotateRight(), curX, curY);
                 case KeyEvent.VK_UP -> movePiece(curPiece.rotateLeft(), curX, curY);
-                case KeyEvent.VK_SPACE -> {aiMoveTest(curPiece);}
+                case KeyEvent.VK_SPACE -> {placeBestPiece(curPiece);}
                 //case KeyEvent.VK_SPACE -> {dropUp(curPiece, curY);}
                 case KeyEvent.VK_D -> oneLineDown();
                 case KeyEvent.VK_F -> placeBestPiece(curPiece);

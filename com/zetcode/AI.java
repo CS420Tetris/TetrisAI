@@ -22,7 +22,7 @@ public class AI
         this.completeLinesWeight = _completeLinesWeight;
         this.bumpinessWeight = _bumpinessWeight;
         this.holeWeight = _holeWeight;
-        //normalize();
+        normalize();
     }
 
     // Returns aggregate height of the board multiplied by its weight
@@ -152,7 +152,7 @@ public class AI
     }
 
     // Returns bumpiness of the board multiplied by its weight
-    public double calculateBumpiness(Tetrominoe[] board)
+    public double calculateBumpinessOLD(Tetrominoe[] board)
     {
         int aggregateBumpHeights = 0;
         int currentHeight = 0;
@@ -178,6 +178,50 @@ public class AI
         }
         return aggregateBumpHeights * bumpinessWeight;
     }
+
+    public double calculateBumpiness(Tetrominoe[] board)
+    {
+        int bumpinessScore = 0;
+        int prevheight = 0;
+        for (int x = 0; x < 10; x++) 
+        {
+            loop1:
+            for (int y = 21; y >= 0; y--) 
+            {
+                if (!board[(y * 10) + x].equals(Shape.Tetrominoe.NoShape))//|| y ==0) 
+                {
+                    
+                    if(x!=0)
+                    {
+                        //System.out.println("X: " + x + "\tY: " + y + "\tbumpiness: " + bumpinessScore + " + abs(" + prevheight + "-" + "(" + y + "+1))");
+                        bumpinessScore = bumpinessScore + Math.abs(prevheight-(y+1));
+                    }
+                        //bumpinessScore++;
+                        prevheight = y+1; 
+                    
+                    
+                    //System.out.print("=" + bumpinessScore+ "\n");
+                    
+                    break loop1;
+                }
+                else if (y==0)
+                {
+                    if(x!=0)
+                    {
+                        //System.out.println("X: " + x + "\tY: " + y + "\tbumpiness: " + bumpinessScore + " + abs(" + prevheight + "-" + "(" + y + "+1))");
+                        bumpinessScore = bumpinessScore + Math.abs(prevheight-y);
+                    }
+
+                    prevheight = y;
+                }
+            }
+            
+        }
+
+        //bumpinessScore = bumpinessScore/2;
+        return bumpinessScore * bumpinessWeight;
+    }
+
 
     // Returns number of holes on the board multiplied by its weight
     public double calculateHoles(Board board)
