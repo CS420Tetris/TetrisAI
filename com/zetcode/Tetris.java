@@ -1,6 +1,8 @@
 package com.zetcode;
 
 import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+
 //import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -75,7 +77,7 @@ public class Tetris extends JFrame {
 
     public static void main(String[] args) {
 
-        int n = 32; // Number of threads
+        int n = 16; // Number of threads
         MultithreadingDemo[] games = new MultithreadingDemo[n];
         Double[] parent1 = new Double[4];
         Double[] parent2 = new Double[4];
@@ -89,32 +91,53 @@ public class Tetris extends JFrame {
         int prevMax1 = -1;
         int prevMax2 = -1;
 
+        int topscore = 0;
 
 
         for (int g = 0; g < gens; g++)
         {
+            
             int maxScore1 = -1;
             int maxScore2 = -1;
-            System.out.println("Generation: " + g);
-            System.out.println("AH: " + bestWeights[0] + "\tCL: " + bestWeights[1] + "\tBP: " + bestWeights[2] + "\tHole: " + bestWeights[3]);
             for (int i = 0; i < n; i++) {
                 MultithreadingDemo object;
+                double mutation = Math.random();
+                int mutateweight = -1;
 
+
+                //Mutation chance of 5%
+                if (mutation>0.75)
+                {
+                    mutateweight = (int)Math.floor(Math.random()*5);
+                    System.out.println("MUTATION: " + mutateweight);
+                }
+                
                 // If first generation
                 if (g == 0)
                 {
                     for (int j = 0; j<4; j++)
                     {
-                        currentWeights[j] = (Math.random() * 2 - 1);
+                        currentWeights[j] = (Math.random() * 0.4 - 0.2);
                     }
                 }
                 else
                 {
                     double norm = Math.sqrt(bestWeights[0]*bestWeights[0] + bestWeights[1]*bestWeights[1] + bestWeights[2]*bestWeights[2] + bestWeights[3]*bestWeights[3]);
-                    for(int j = 0; j<4; j++)
+                    
+                    for (int j = 0; j<4; j++)
                     {
-                        currentWeights[j] = (bestWeights[j] + (Math.random() * 0.4 - 0.2))/norm;
+                        if (j != mutateweight)
+                        {
+                            currentWeights[j] = bestWeights[j]/norm;
+                        }
+                        else
+                        {
+                            currentWeights[j] = (bestWeights[j] + (Math.random() * 0.4 - 0.2))/norm;
+                        }
                     }
+
+                    
+                
                 }
 
                 int windowsPerRow = 12;
@@ -124,7 +147,13 @@ public class Tetris extends JFrame {
                 object = new MultithreadingDemo(Xoffset, Yoffset, currentWeights);
                 games[i] = object;
                 object.start();
+                // for (int k = 0; k < n; k++)
+                // {
+                //     games[i].getGame().dispose();
+                // }
             }
+            System.out.println("Generation: " + g + "\tBest Score: " + topscore );
+            System.out.println( "Children Weights" + "\tAH: " + currentWeights[0] + "\tCL: " + currentWeights[1] + "\tBP: " + currentWeights[2] + "\tHole: " + currentWeights[3]);
     
             boolean continueGen = true;
             while(continueGen)
@@ -195,7 +224,9 @@ public class Tetris extends JFrame {
                 bestWeights[1] = parent1[1] * maxScore1 + parent2[1] * maxScore2;
                 bestWeights[2] = parent1[2] * maxScore1 + parent2[2] * maxScore2;
                 bestWeights[3] = parent1[3] * maxScore1 + parent2[3] * maxScore2;
-            
+
+                topscore = maxScore1;
+
             for (int i = 0; i < n; i++)
             {
                 games[i].getGame().dispose();
@@ -234,9 +265,11 @@ class MultithreadingDemo extends Thread {
     //         System.out.println("Exception is caught");
     //     }
     // }
+    
 
     public Tetris getGame()
     {
         return game;
     }
 }
+

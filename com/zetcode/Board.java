@@ -17,7 +17,7 @@ public class Board extends JPanel {
 
     private final int BOARD_WIDTH = 10;
     private final int BOARD_HEIGHT = 22;
-    private final int PERIOD_INTERVAL = 1;
+    private final int PERIOD_INTERVAL = 0;
 
     private Timer timer;
     private boolean isFallingFinished = false;
@@ -30,6 +30,13 @@ public class Board extends JPanel {
     private Tetrominoe[] board;
     private Trainer trains;
     private boolean gameStatus = true;
+    private boolean display = true;
+
+
+    public void pausedisplay()
+    {
+        display = !display;
+    }
     // private AI ai;
 
     public Board(Tetris parent, Double[] weights) 
@@ -208,7 +215,10 @@ public class Board extends JPanel {
             timer.stop();
             gameStatus = false;
             
-            //setVisible(false);
+            if (!display)
+            {
+                setVisible(false);
+            }
             Thread.currentThread().interrupt();
             //return;
             var msg = String.format("Game over. Score: %d", numLinesRemoved);
@@ -568,7 +578,7 @@ public class Board extends JPanel {
 
             // Java 12 switch expressions
             switch (keycode) {
-
+                case KeyEvent.VK_ESCAPE -> pausedisplay();
                 case KeyEvent.VK_P -> pause();
                 case KeyEvent.VK_LEFT -> movePiece(curPiece, curX - 1, curY);
                 case KeyEvent.VK_RIGHT -> movePiece(curPiece, curX + 1, curY);
