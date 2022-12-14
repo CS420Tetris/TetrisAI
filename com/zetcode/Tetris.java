@@ -84,8 +84,8 @@ public class Tetris extends JFrame {
         Double[] parent1 = new Double[4];
         Double[] parent2 = new Double[4];
         Double[] bestWeights = new Double[4];
-        Double[] currentWeights = new Double[4];
-        int gens = 255;
+        Double[] currentWeights = { -0.510066, 0.760666, -0.184483, -0.35663};//new Double[4];
+        int gens = 250;
 
         int gameid1 = 0;
         int gameid2 = 0;
@@ -108,7 +108,7 @@ public class Tetris extends JFrame {
 
 
                 //Mutation chance of 5%
-                if (mutation>0.95)
+                if (mutation>0.85)
                 {
                     mutateweight = (int)Math.floor(Math.random()*5);
                     //System.out.println("MUTATION: " + mutateweight);
@@ -117,10 +117,11 @@ public class Tetris extends JFrame {
                 // If first generation
                 if (g == 0)
                 {
-                    for (int j = 0; j<4; j++)
-                    {
-                        currentWeights[j] = (Math.random() * 0.4 - 0.2);
-                    }
+                    //for (int j = 0; j<4; j++)
+                    //{
+                    //    currentWeights[j] = (Math.random() * 2 - 1);
+                    //}
+                    
                 }
                 else
                 {
