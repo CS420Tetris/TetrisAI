@@ -2,6 +2,7 @@ package com.zetcode;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 
 //import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -21,6 +22,7 @@ public class Tetris extends JFrame {
     private JLabel statusbar;
     private Board board;
     private Double[] weights;
+    
 
     public Tetris(int x, int y, Double[] bestWeights) {
         weights = bestWeights;
@@ -76,14 +78,14 @@ public class Tetris extends JFrame {
     }
 
     public static void main(String[] args) {
-
+        
         int n = 16; // Number of threads
         MultithreadingDemo[] games = new MultithreadingDemo[n];
         Double[] parent1 = new Double[4];
         Double[] parent2 = new Double[4];
         Double[] bestWeights = new Double[4];
         Double[] currentWeights = new Double[4];
-        int gens = 500;
+        int gens = 255;
 
         int gameid1 = 0;
         int gameid2 = 0;
@@ -109,7 +111,7 @@ public class Tetris extends JFrame {
                 if (mutation>0.75)
                 {
                     mutateweight = (int)Math.floor(Math.random()*5);
-                    System.out.println("MUTATION: " + mutateweight);
+                    //System.out.println("MUTATION: " + mutateweight);
                 }
                 
                 // If first generation
@@ -140,7 +142,7 @@ public class Tetris extends JFrame {
                 
                 }
 
-                int windowsPerRow = 12;
+                int windowsPerRow = 8;
                 int Yoffset = 400 * (int)Math.floor(i/windowsPerRow);
                 int Xoffset = i%windowsPerRow;
 
@@ -242,7 +244,7 @@ class MultithreadingDemo extends Thread {
         try {
             // Displaying the thread that is running
             game = new Tetris(x, y, weights);
-            game.setVisible(true);
+            //game.setVisible(true);
             
             
         }
