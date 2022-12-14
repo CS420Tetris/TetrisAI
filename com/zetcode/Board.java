@@ -347,7 +347,7 @@ public class Board extends JPanel {
         //int currentX = BOARD_WIDTH -1 - currentPiece.minX();
         //int currentY = 10;
         int newX = 0;
-        int newY = 10;
+        int newY = 19;
         int x = 0;
 
         boolean inBounds = true;
@@ -375,7 +375,7 @@ public class Board extends JPanel {
 
             for (int j = 0; j<10; j++)
             {
-                newY = 10;
+                newY = 19;
                 newX = xLocations[j];
                 inBounds = true;
                 

@@ -108,7 +108,7 @@ public class Tetris extends JFrame {
 
 
                 //Mutation chance of 5%
-                if (mutation>0.75)
+                if (mutation>0.95)
                 {
                     mutateweight = (int)Math.floor(Math.random()*5);
                     //System.out.println("MUTATION: " + mutateweight);
@@ -244,7 +244,7 @@ class MultithreadingDemo extends Thread {
         try {
             // Displaying the thread that is running
             game = new Tetris(x, y, weights);
-            //game.setVisible(true);
+            game.setVisible(true);
             
             
         }
